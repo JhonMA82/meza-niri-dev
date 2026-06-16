@@ -22,8 +22,8 @@ base:
     tag: "44"  # quoted — YAML int vs string matters for jsonschema
   public-key: |
     -----BEGIN PUBLIC KEY-----
-    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEHes6eVD/HOx4y2ldCiV2LxllmY9G
-    L2bRWVSJmSqhu1J26BDuQuE/a/XMFfxg6pdgoQnwXXEwTB2/LopfHCWajQ==
+    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEVqApYMvvh+t8+x8SCgJweL374Kkv
+    vNLIIe9k7Cn1c1hTqtOFmF2ClLjQgKZOihFsVaonvR4jv1ofvkGNKOUk0A==
     -----END PUBLIC KEY-----
 
 spec:
