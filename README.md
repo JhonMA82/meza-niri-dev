@@ -7,13 +7,11 @@ MezaOS niri Wayland workstation — tiling compositor, material shell, dev tools
 This distro is built by [BlueBuild](https://blue-build.org/).
 Trigger a build with:
 
-    gh workflow run bluebuild.yml --repo JhonMA82/meza-niri-dev
+    gh workflow run build.yml --repo JhonMA82/meza-niri-dev
 
 ## Verify
 
-    cosign verify --certificate-identity-regexp ".*" \
-      --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
-      ghcr.io/JhonMA82/meza-niri-dev:latest
+    cosign verify --key cosign.pub ghcr.io/JhonMA82/meza-niri-dev:latest
 
 ---
 
@@ -34,7 +32,7 @@ To rebase an existing atomic Fedora installation to the latest build:
 
 - First rebase to the unsigned image, to get the proper signing keys and policies installed:
   ```
-  rpm-ostree rebase ostree-unverified-registry:ghcr.io/blue-build/template:latest
+  rpm-ostree rebase ostree-unverified-registry:ghcr.io/JhonMA82/meza-niri-dev:latest
   ```
 - Reboot to complete the rebase:
   ```
@@ -42,7 +40,7 @@ To rebase an existing atomic Fedora installation to the latest build:
   ```
 - Then rebase to the signed image, like so:
   ```
-  rpm-ostree rebase ostree-image-signed:docker://ghcr.io/blue-build/template:latest
+  rpm-ostree rebase ostree-image-signed:docker://ghcr.io/JhonMA82/meza-niri-dev:latest
   ```
 - Reboot again to complete the installation
   ```
@@ -51,14 +49,28 @@ To rebase an existing atomic Fedora installation to the latest build:
 
 The `latest` tag will automatically point to the latest build. That build will still always use the Fedora version specified in `recipe.yml`, so you won't get accidentally updated to the next major version.
 
-## ISO
+## Generate an ISO
 
-If build on Fedora Atomic, you can generate an offline ISO with the instructions available [here](https://blue-build.org/how-to/generate-iso/#_top). These ISOs cannot unfortunately be distributed on GitHub for free due to large sizes, so for public projects something else has to be used for hosting.
+Once the image is published, generate an installable ISO with the BlueBuild CLI:
+
+```bash
+sudo bluebuild generate-iso --iso-name meza-niri-dev.iso image ghcr.io/jhonma82/meza-niri-dev
+```
+
+Or using the BlueBuild container image if you don't have the CLI installed locally:
+
+```bash
+docker run --rm -it --privileged -v "$PWD:/workspace" -w /workspace \
+  ghcr.io/blue-build/cli:v0.9 \
+  generate-iso --iso-name meza-niri-dev.iso image ghcr.io/jhonma82/meza-niri-dev
+```
+
+Flash the resulting `meza-niri-dev.iso` to a USB drive (e.g., with Fedora Media Writer) and boot from it.
 
 ## Verification
 
 These images are signed with [Sigstore](https://www.sigstore.dev/)'s [cosign](https://github.com/sigstore/cosign). You can verify the signature by downloading the `cosign.pub` file from this repo and running the following command:
 
 ```bash
-cosign verify --key cosign.pub ghcr.io/blue-build/template
+cosign verify --key cosign.pub ghcr.io/JhonMA82/meza-niri-dev
 ```
