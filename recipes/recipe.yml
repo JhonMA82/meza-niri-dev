@@ -20,7 +20,11 @@ base:
   image:
     repository: ghcr.io/ublue-os/bluefin-dx
     tag: "44"  # quoted — YAML int vs string matters for jsonschema
-  public-key: cosign.pub-placeholder  # placeholder; cosign-init writes a real one at apply time
+  public-key: |
+    -----BEGIN PUBLIC KEY-----
+    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEHes6eVD/HOx4y2ldCiV2LxllmY9G
+    L2bRWVSJmSqhu1J26BDuQuE/a/XMFfxg6pdgoQnwXXEwTB2/LopfHCWajQ==
+    -----END PUBLIC KEY-----
 
 spec:
   tags: []
@@ -41,7 +45,6 @@ modules:
   # (signing + dnf install + optional default-flatpaks). Do not commit this
   # file unchanged — `validate-recipe` will reject empty `modules: []`.
   - type: signing
-    keyless: true
 
   - type: dnf
     repos:
