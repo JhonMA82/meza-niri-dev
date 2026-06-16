@@ -1,3 +1,24 @@
+# meza-niri-dev
+
+MezaOS niri Wayland workstation — tiling compositor, material shell, dev tools.
+
+## Build
+
+This distro is built by [BlueBuild](https://blue-build.org/).
+Trigger a build with:
+
+    gh workflow run bluebuild.yml --repo JhonMA82/meza-niri-dev
+
+## Verify
+
+    cosign verify --certificate-identity-regexp ".*" \
+      --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+      ghcr.io/JhonMA82/meza-niri-dev:latest
+
+---
+
+> The upstream template README follows below.
+
 # BlueBuild Template &nbsp; [![bluebuild build badge](https://github.com/blue-build/template/actions/workflows/build.yml/badge.svg)](https://github.com/blue-build/template/actions/workflows/build.yml)
 
 See the [BlueBuild docs](https://blue-build.org/how-to/setup/) for quick setup instructions for setting up your own repository based on this template.

@@ -1,45 +1,67 @@
+# TEMPLATE: harness/templates/recipe.yml.skel
+# V1 → V2 migration: top-level version: 2 added; v1 fields moved to
+# metadata.* / base.image.*. Placeholders: SPIN_NAME, BASE_IMAGE,
+# IMAGE_VERSION, DESCRIPTION (4 v1-equivalent; the LLM fills these
+# from the new-spin interview). Do not add new opt-in placeholders
+# (KERNEL_MODE, HOMED_MODE, NIX_MODE) here — they belong to slices
+# 2-4 of mezaos-harness-extensions, not to the v2 migration slice.
+# After filling, the result MUST pass
+# `harness/skills/validate-recipe/scripts/check.sh`.
 ---
-# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-# image will be published to ghcr.io/<user>/<name>
-name: template
-# description will be included in the image's metadata
-description: This is my personal OS image.
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v2.json
+version: 2
 
-# the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/ublue-os/silverblue-main
-image-version: 42 # latest is also supported if you want new updates ASAP
+metadata:
+  name: meza-niri-dev
+  description: MezaOS niri Wayland workstation — tiling compositor, material shell, dev tools.
+  labels: {}
 
-# module configuration, executed in order
-# you can include multiple instances of the same module
+base:
+  image:
+    repository: ghcr.io/ublue-os/bluefin-dx
+    tag: "44"  # quoted — YAML int vs string matters for jsonschema
+  public-key: cosign.pub-placeholder  # placeholder; cosign-init writes a real one at apply time
+
+spec:
+  tags: []
+  platforms: []
+  tool-versions:
+    bluebuild: ">= 1.0.0"
+    cosign: ">= 2.4.0"
+    nushell: ">= 0.100.0"
+
+# Opt-in fragments (filled in by the new-spin flow in slice 5;
+# this slice only ships the v2 migration of the 4 v1 placeholders):
+#   10-kernel-cachyos.yml   (only if kernel mode == cachyos)
+#   20-kernel-nvidia.yml    (only if kernel mode == nvidia)
+#   30-homed.yml            (only if homed mode == yes)
+#   40-nix.yml              (only if nix mode == yes)
 modules:
-  - type: files
-    files:
-      - source: system
-        destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
+  # TEMPLATE: replace this placeholder module with the LLM's scaffold output
+  # (signing + dnf install + optional default-flatpaks). Do not commit this
+  # file unchanged — `validate-recipe` will reject empty `modules: []`.
+  - type: signing
+    keyless: true
 
   - type: dnf
     repos:
-      copr:
-        - atim/starship
+      files:
+        - https://github.com/terrapkg/subatomic-repos/raw/main/terra.repo
     install:
       packages:
-        - micro
-        - starship
-    remove:
-      packages:
-        # example: removing firefox (in favor of the flatpak)
-        # "firefox" is the main package, "firefox-langpacks" is a dependency
-        - firefox
-        - firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
+        - niri
+        - sddm
+        - fish
+        - nautilus
+        - DankMaterialShell
+        - repo: terra
+          packages:
+            - ghostty
+            - zed
 
-  - type: default-flatpaks
-    configurations:
-      - notify: true # Send notification after install/uninstall is finished (true/false)
-        scope: system
-        # If no repo information is specified, Flathub will be used by default
-        install: # system flatpaks we want all users to have and not remove
-          - org.mozilla.firefox
-          - org.gnome.Loupe
-      - scope: user # Also add Flathub user repo, but no user packages
-
-  - type: signing # this sets up the proper policy & signing files for signed images to work fully
+  - type: systemd
+    system:
+      enabled:
+        - sddm.service
+      disabled:
+        - gdm.service

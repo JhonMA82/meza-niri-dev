@@ -1,4 +1,10 @@
------BEGIN PUBLIC KEY-----
-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEP42H58yIV98/GrQkArabAnsfLLjr
-MI848NLkUwI29cEnc6K8qVZESVrqxP0mB9e4NCSJ57kUf0BryiR77FN9HA==
------END PUBLIC KEY-----
+# KEYLESS MODE — no private key in repository
+# Verify with: cosign verify --certificate-identity=<workflow-ref> \
+#   --certificate-oidc-issuer=https://token.actions.githubusercontent.com \
+#   <image>
+#
+# Example for the main branch of JhonMA82/MezaOS:
+# cosign verify \
+#   --certificate-identity "https://github.com/JhonMA82/MezaOS/.github/workflows/build.yml@refs/heads/main" \
+#   --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+#   ghcr.io/jhonma82/mezaos:latest
