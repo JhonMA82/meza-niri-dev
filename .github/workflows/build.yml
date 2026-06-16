@@ -22,6 +22,9 @@ jobs:
       contents: read
       packages: write
       id-token: write
+    env:
+      # The private key was generated with an empty cosign password.
+      COSIGN_PASSWORD: ""
     strategy:
       fail-fast: false # stop GH from cancelling all matrix builds if one fails
       matrix:
@@ -32,9 +35,6 @@ jobs:
       # the build is fully handled by the reusable github action
       - name: Build Custom Image
         uses: blue-build/github-action@v1.11
-        env:
-          # The private key was generated with an empty cosign password.
-          COSIGN_PASSWORD: ""
         with:
           recipe: ${{ matrix.recipe }}
           cosign_private_key: ${{ secrets.SIGNING_SECRET }}
